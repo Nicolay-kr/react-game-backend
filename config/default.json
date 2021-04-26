@@ -1,0 +1,7 @@
+{
+  "DEFAULT_LANG": "en",
+  "PORT": 8080,
+  "jwtSecret": "nicolayKr",
+  "MONGO_CONNECTION_STRING": "mongodb+srv://nicolay-0320:021290@cluster0.o28uc.mongodb.net/react-game?retryWrites=true&w=majority",
+  "baseUrl": "http://localhost:8080"
+}

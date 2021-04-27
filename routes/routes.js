@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const { check, validationResult, body } = require('express-validator');
 const User = require('../models/User.schema');
+const Statistic = require("../models/Statistic.schema");
 const router = Router();
 
-//  /api/auth/register
+// /register
 router.post(
 	'/register',
 	[
@@ -24,7 +25,7 @@ router.post(
 				});
 			}
 
-			const { email, password } = req.body; // парсим что пришло с фронта
+			const { name, email, password } = req.body; // парсим что пришло с фронта
 
 			const candidate = await User.findOne({ email }); // ищем есть ли уже такой email в базе
 
@@ -34,7 +35,7 @@ router.post(
 
 			const hashedPassword = await bcrypt.hash(password, 12);
 
-			const user = new User({ email, password: hashedPassword });
+			const user = new User({ name, email, password: hashedPassword });
 
 			await user.save();
 
@@ -46,7 +47,7 @@ router.post(
 	}
 );
 
-//  /api/auth/login
+//  /login
 router.post(
 	'/login',
 	[
@@ -81,11 +82,45 @@ router.post(
 
 			const token = jwt.sign({ userId: user.id }, config.get('jwtSecret'), { expiresIn: '1h' });
 
-			res.json({ token, userId: user.id });
+			res.json({ token, userId: user.id, name: user.name });
 		} catch (e) {
-			res.status(500).json({ message: 'something wrong' });
+			res.status(500).json({ message: 'wrong' });
 		}
 	}
+);
+
+router.post(
+  "/statistic",
+
+  async (req, res) => {
+    try {
+      const { name, board, time, moves } = req.body;
+      const statistic = new Statistic({ name, board, time, moves });
+      await statistic.save();
+
+      // 201 status когда чтото создаётся
+      res.status(201).json({ message: "That's all right. Statistic add" });
+    } catch (e) {
+      res.status(500).json({ message: "wrong" });
+    }
+  }
+);
+
+router.get(
+  "/statisticall",
+
+  async (req, res) => {
+    try {
+      // const { name, board, time, moves } = req.body;
+			const allStatistic = await Statistic.find({});
+      res.json(allStatistic);
+
+      // 201 status когда чтото создаётся
+      res.status(201).json({ message: "That's all right. Statistic add" });
+    } catch (e) {
+      res.status(500).json({ message: "wrong"});
+    }
+  }
 );
 
 module.exports = router;

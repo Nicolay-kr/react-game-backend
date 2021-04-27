@@ -12,7 +12,7 @@ app.use(express.json({ extended: true }))
 app.use('/', require('./routes/routes'))
 
 
-const PORT = config.get('PORT') || 8080;
+const PORT = process.env.PORT || 8080;
 
 async function start() {
 	try {
